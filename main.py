@@ -96,8 +96,8 @@ def search_card(card_name):
     #list to verify items have been passed
     cardArray = []
     #Default embeded string
-    embededVar = discord.Embed(title=card_name.upper() + " Search",url=url , color=discordColor)
-
+    embededVar = discord.Embed(title=toCamel(card_name) + "Search",url=url , color=discordColor)
+    
     #pulls up all page results
     for cardDetails in content.find_all('article', attrs={"class": "card"}):
       
@@ -147,12 +147,27 @@ def cardNotFound(errortitle, errorReason):
   embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
   return embededError
 
+def toCamel(text):
+	#converts to only letters and spaces
+	text =  re.sub('[^A-Za-z0-9 ]+', '', text)
+	#removes extra white speace and convert word to lower case
+	text = joinSplit(text.lower())
+	#will break apart each word into list
+	words = text.split()
+	 
+	fullWord = ""
+	for x in words:
+		#for each list it will remove letter at index 1 and replace it wiht a capital
+		#join word and re join full string
+		fullWord += x.capitalize() + " "
+	return fullWord
+	
 
 
 def joinSplit(myString):
-  #removes excess white space 
-  cleanString = " ".join(myString.split())
-  return cleanString
+	#removes excess white space 
+	cleanString = " ".join(myString.split())
+	return cleanString
   
 keep_alive()
 client.run(os.getenv('TOKEN')) #RUNS BOT using token in .env
