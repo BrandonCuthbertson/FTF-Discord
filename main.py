@@ -107,7 +107,8 @@ def search_card(card_name):
       theCard = re.sub('[^A-Za-z0-9 ]+', '', card_name)
       print(cardHeading)
       #use casefold() to match regardless of case
-      if theCard.casefold() in cardHeading.casefold():           
+      #checks to see if every word in the card is in card Heading
+      if set(theCard.casefold().split()) <= set(cardHeading.casefold().split()):           
         #puts creates obj
         class cardObj:
           def __init__(card, name, theSet, price, currency, hyperLink):
