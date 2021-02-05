@@ -13,9 +13,6 @@ client = discord.Client() #discord Connection
 
 discordColor = 0xc64d23 #At top so I dont have to search for it
 
-
-
-
 @client.event
 async def on_ready():
   print('Jacking into Discord {0.user}'.format(client)) #replacing 0 with client
@@ -113,26 +110,27 @@ def search_card(card_name):
       if theCard.casefold() in cardHeading.casefold():           
         #puts creates obj
         class cardObj:
-          def __init__(card, name, theSet, price, currency):
+          def __init__(card, name, theSet, price, currency, hyperLink):
             card.name = name
             card.theSet = theSet
             card.price = price
             card.currency = currency
-            
-        #puts all info in variable
-        print(cardDetails.h4.a.text.upper())
-        #puts variables into obj
+            card.link = hyperLink
+
+	#puts variables into obj
         theCard = cardObj(
                     cardDetails.h4.a.text.upper(),
                     cardDetails.find('p', attrs={"class": "card-set"}).text,
                     cardDetails.find('span', attrs={"class": "price--withoutTax"}).text,
                     cardDetails.find('span', attrs={"class": "currencyCode"}).text,
+		    cardDetails.h4.a['href']
                    
           )
         #puts object in an array
         cardArray.append(cardObj)
         #puts obj into embededVar
-        embededVar.add_field(name=theCard.name, value=theCard.theSet + "\n" + theCard.price +" | " + theCard.currency, inline=True)
+        theCardText = '[' + theCard.theSet + ']' + '(' + theCard.link +')'
+        embededVar.add_field(name=theCard.name, value=theCardText + "\n" + theCard.price +" | " + theCard.currency, inline=True)
 
         
     #if search returns no data then array will be empty
@@ -148,7 +146,6 @@ def cardNotFound(errortitle, errorReason):
   embededError = discord.Embed(title=errortitle, color=discordColor)
   embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
   return embededError
-
 
 
 
