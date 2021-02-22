@@ -55,7 +55,7 @@ async def on_message(message):
       elif "help" in x.casefold():
       #Gets How to use
           
-        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices Face to Face Games.\nTo search a Card just place the card name between two $$ \n\n eg. $$Ankle Shanker$$ \n\n\n", color=discordColor)
+        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices from Face to Face Games.\nTo search a Card just place the card name between two $$ \n\n eg. $$Ankle Shanker$$ \n\n\n", color=discordColor)
         
         await message.channel.send(embed=embedHelp)
       else:
