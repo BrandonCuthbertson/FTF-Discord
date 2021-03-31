@@ -54,8 +54,8 @@ async def on_message(message):
      
       elif "help" in x.casefold():
       #Gets How to use
-          
-        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices from Face to Face Games.\nTo search a Card just place the card name between two $$ \n\n eg. $$Ankle Shanker$$ \n\n\n", color=discordColor)
+        
+        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices from Face to Face Games.\n\nTo search a Card just place the card name between two \"$$\" \neg. $$Ankle Shanker$$ \nIt is also compatable with the scryfall box by embedding the scryfall brackets withing the \"$$\"", color=discordColor)
         
         await message.channel.send(embed=embedHelp)
       else:
@@ -86,9 +86,10 @@ def search_card(card_name):
   
   if howManyFound == 0:
    #if no results found print No Results Found
-    return cardNotFound(card_name + " Not Found", "CARD SEARCH INCONCLUSIVE")
+    return cardNotFound(toCamel(card_name) + "Not Found", "url", False, "CARD SEARCH INCONCLUSIVE")
+    #if cards have a name shorter than 3 letters AND there are more than 200 results
   elif len(card_name) <= 4 and howManyFound >= 200 :
-      return cardNotFound("TO MANY CARDS", "PLEASE REFINE SEARCH")
+      return cardNotFound("To Many Cards for " + toCamel(card_name) ,url, True, "PLEASE REFINE SEARCH")
       
 
   #else Do card retreval
@@ -137,17 +138,23 @@ def search_card(card_name):
         
     #if search returns no data then array will be empty
     if cardArray == []:
-      return cardNotFound("Card Not Found", "CARD SEARCH INCONCLUSIVE")
+      return cardNotFound("Card Not Found",url, True,  "CARD SEARCH INCONCLUSIVE")
     else:
       return embededVar
 
 #retunrs an error message into discord
-def cardNotFound(errortitle, errorReason):
-  
-   #defaults to error message
-  embededError = discord.Embed(title=errortitle, color=discordColor)
-  embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
-  return embededError
+def cardNotFound(errortitle,errorLink,isLinkOn, errorReason):
+
+  if isLinkOn == True:
+   	#Error Message with Link
+  	embededError = discord.Embed(title=errortitle,url=errorLink, color=discordColor)
+  	embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
+  	return embededError
+  else:
+	#Error Message without link
+  	embededError = discord.Embed(title=errortitle, color=discordColor)
+  	embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
+  	return embededError
 
 def toCamel(text):
 	#converts to only letters and spaces
