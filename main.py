@@ -176,7 +176,7 @@ def toCamel(text):
 	for x in words:
 		#for each list it will remove letter at index 1 and replace it wiht a capital
 		#join word and re join full string
-		fullWord += x.capitalize() + " "
+		fullWord += x.title() + " "
 	return fullWord
 	
 
