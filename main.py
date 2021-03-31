@@ -55,8 +55,12 @@ async def on_message(message):
       elif "help" in x.casefold():
       #Gets How to use
         
-        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices from Face to Face Games.\n\nTo search a Card just place the card name between two \"$$\" \neg. $$Ankle Shanker$$ \nIt is also compatable with the scryfall box by embedding the scryfall brackets withing the \"$$\"", color=discordColor)
-        
+        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices from Face to Face Games.", color=discordColor)
+        embedHelp.add_field(name="To search a Card just place the card name between two \"$$\"", value="eg. $$Ankle Shanker$$", inline=False)
+        embedHelp.add_field(name="It is also compatible with the Scryfall search Bot by embedding the Scryfall bracket within the \"$$\"", value="\u200b", inline=False) 
+	#value is required, using empy space \u200b 
+        #embedHelp.add_field(name="Test", value="test", inline=True)
+
         await message.channel.send(embed=embedHelp)
       else:
         await message.channel.send(embed=search_card(x)) #sends a cards
