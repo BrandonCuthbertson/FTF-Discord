@@ -107,14 +107,18 @@ def search_card(card_name):
     for cardDetails in content.find_all('article', attrs={"class": "card"}):
       
       #gets the card name for only the cards with card name
-      #fixes issue of cardname, not appearing under card_name
+      #replaces symbols with Empty so card's name or card-s name gets cards name
       cardHeadingReplaceEmpty = re.sub('[^A-Za-z0-9 ]+', '', cardDetails.h4.text)
+      #replaces symbols with Empty so card's name or card-s name gets card s name
       cardHeadingReplaceSpace = re.sub('[^A-Za-z0-9 ]+', ' ', cardDetails.h4.text)
-      theCard = re.sub('[^A-Za-z0-9 ]+', '', card_name)
+
+      theCard = re.sub('[^A-Za-z0-9]+', ' ', card_name)
+      
       print(cardHeadingReplaceEmpty +"\n" + cardHeadingReplaceSpace);
       #use casefold() to match regardless of case
-      #checks to see if every word in the card is without punctuation and with punctuation with space
-      if set(theCard.casefold().split()) <= set(cardHeadingReplaceEmpty.casefold().split()) or      set(theCard.casefold().split()) <= set(cardHeadingReplaceSpace.casefold().split()):           
+      
+      #first 2 check if CARD's NA-ME is equal to cards name or card s na memoryview 
+      if set(theCard.casefold().split()) <= set(cardHeadingReplaceEmpty.casefold().split()) or      set(theCard.casefold().split()) <= set(cardHeadingReplaceSpace.casefold().split()):
         #puts creates obj
         class cardObj:
           def __init__(card, name, theSet, price, currency, hyperLink):
@@ -162,7 +166,7 @@ def cardNotFound(errortitle,errorLink,isLinkOn, errorReason):
 
 def toCamel(text):
 	#converts to only letters and spaces
-	text =  re.sub('[^A-Za-z0-9 ]+', '', text)
+	text =  re.sub('[^A-Za-z0-9 ,-]+', ' ', text)
 	#removes extra white speace and convert word to lower case
 	text = joinSplit(text.lower())
 	#will break apart each word into list
