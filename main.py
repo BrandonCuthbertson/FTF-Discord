@@ -23,8 +23,11 @@ async def on_message(message):
     return
 
   text = message.content  
+  textLength = len(text)
   #get all words between $$ while there are two $$ that are not equal
-  if text.find('$$') != -1 and text.rfind('$$') != -1 and text.find('$$') !=text.rfind('$$') != -1:
+  if text.find('$$') != -1 and text.rfind('$$') != -1 and text.find('$$') !=text.rfind('$$') and text.find('$$',1,textLength-2) !=text.rfind('$$'):
+    #print(text.find('$$'));
+    #print(text.rfind('$$'));
     #variables
     cardList = []
     num = 0
@@ -49,6 +52,7 @@ async def on_message(message):
      #if cardname is empty or not a string
       if not x or x.isspace():
         #returns nothing
+        print(x + " IS NOT A STRING")
         return 
       
      
