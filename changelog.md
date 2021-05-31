@@ -1,5 +1,5 @@
 # FTF Bot 2.0
- Changes with 2.0
+ Changes with 2.0 *[May 30, 2021]*
 ### Added
  - Added validate.py to store validation for ease of use and access
  - Added debug_log.py to improve console readability

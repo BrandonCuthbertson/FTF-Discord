@@ -1,5 +1,4 @@
 #This holds most of the functions for the searching of the cards
-
 import debug_log as printLog
 import validate
 import discord
