@@ -1,194 +1,98 @@
 #This is the Dorc For a discord Bot that allows user to pull prices for cards from www.facetofacegames.com
 #This Bot is for personal use and I have no affiliation to FaceToFaceGames
 #Program By Brandon Cuthbertson
-import discord #for Bot
-import os #imports form the .env file
-import urllib.parse #for converting to url encoded
-import re #regex modual
-from bs4 import BeautifulSoup #for web Scraping
-import requests #for web Scraping
+
+#IMPORTS#
+import discord
+import os #for secret tokens
 from keep_alive import keep_alive
+#Project Imports
+import debug_log as printLog
+import validate 
+import card_search as cs
 
-client = discord.Client() #discord Connection
+#Other
 
-discordColor = 0xc64d23 #At top so I dont have to search for it
+#from keep_alive import keep_alive
+#Global
 
+
+#Connection to Client
+client = discord.Client()
+
+#Quick Reference
+##Colors
+ftfColor = 0xc64d23 #orange
+
+PokeColor = 0xffcb05 #yellow
+YugiColor = 0x78412a #Brown
+DigiColor = 0x31a1da #blue
+
+colorW = 0xf9faf4
+colorU = 0x0e68ab
+colorB = 0xa69f9d
+colorR = 0xd3202a
+colorG = 0x009b3e
+
+colorP = 0x784e78 #purple
+
+##Search Variables
+class CardSearchParameters:
+	def __init__(self, first_bracket, last_bracket, card_game,general_url, single_url, color):
+		self.first = first_bracket
+		self.last = last_bracket
+		self.game = card_game
+		self.gurl = general_url
+		self.surl = single_url
+		self.color = color
+#gurl is for all product look up surl is for single cards that have sets
+MTG = CardSearchParameters("$[","]$","Magic",os.getenv('gurlMTG'),os.getenv('surlMTG'), colorP)
+YGO = CardSearchParameters("$<",">$","YuGiOh",os.getenv('gurlYGO'),os.getenv('surlYGO'), YugiColor)
+PKMN = CardSearchParameters("$(",")$","Pokemon",os.getenv('gurlPKMN'),os.getenv('surlPKMN'), PokeColor)
+
+game_list = [MTG,YGO, PKMN]
+
+#keyword for Help feature
+help_me = '$Help$'
+
+#On Ready
 @client.event
 async def on_ready():
-  print('Jacking into Discord {0.user}'.format(client)) #replacing 0 with client
-
-@client.event
-async def on_message(message):
-  if message.author == client.user: #if author of the message is the bot do nothing
-    return
-
-  text = message.content  
-  textLength = len(text)
-  #get all words between $$ while there are two $$ that are not equal
-  if text.find('$$') != -1 and text.rfind('$$') != -1 and text.find('$$') !=text.rfind('$$') and text.find('$$',1,textLength-2) !=text.rfind('$$'):
-    #print(text.find('$$'));
-    #print(text.rfind('$$'));
-    #variables
-    cardList = []
-    num = 0
-    #loops for each word
-    while '$$' in text and num !=30:
-      #to stop infintie loop while testing
-      num += 1
-      print("Num Count:" + str(num))
-      #finds first two indexes
-      start = text.find('$$') + 2
-      end = text.find('$$', start)
-      #sets word to variable and  adds word to list
-      cardName = text[start:end]
-      cardList.append(cardName)
-      #removes word from string
-      text = text.replace('$$'+ cardName +'$$', "" )    
-      
-    
-    num = 0 #resets num after loop
-
-    for x in cardList:
-     #if cardname is empty or not a string
-      if not x or x.isspace():
-        #returns nothing
-        print(x + " IS NOT A STRING")
-        return 
-      
-     
-      elif "help" in x.casefold():
-      #Gets How to use
-        
-        embedHelp=discord.Embed(title="HELP", description="This is my personal scraper, which will get you card prices from Face to Face Games.", color=discordColor)
-        embedHelp.add_field(name="To search a Card just place the card name between two \"$$\"", value="eg. $$Ankle Shanker$$", inline=False)
-        embedHelp.add_field(name="It is also compatible with the Scryfall search Bot by embedding the Scryfall bracket within the \"$$\"", value="\u200b", inline=False) 
-	#value is required, using empy space \u200b 
-        #embedHelp.add_field(name="Test", value="test", inline=True)
-
-        await message.channel.send(embed=embedHelp)
-      else:
-        await message.channel.send(embed=search_card(x)) #sends a cards
-        
-
-
-def search_card(card_name):
-  
-  #Converts to url encoded 
-  cardURL = urllib.parse.quote(joinSplit(card_name))
-  print('\n\nLoading HTML for '+ joinSplit(card_name))
-  
-  #sets url for search based on insert
-  url = os.getenv('url1') + cardURL + os.getenv('url2')
-  response = requests.get(url, timeout=5) 
-  print("status code is : " + str(response.status_code))
-  print(response.reason)
-  #set content to html page
-  content = BeautifulSoup(response.content, "html.parser")
-  
-
-  #get result heading and remove whitespece
-  isCardFound = joinSplit(content.find('h1',attrs={'class': 'page-heading'}).text)
-  print(isCardFound)
-  #pulls numbers out of isCardFound
-  howManyFound = int(re.search(r'\b\d+\b', isCardFound).group(0))
-  
-  if howManyFound == 0:
-   #if no results found print No Results Found
-    return cardNotFound(toCamel(card_name) + "Not Found", "url", False, "CARD SEARCH INCONCLUSIVE")
-    #if cards have a name shorter than 3 letters AND there are more than 200 results
-  elif len(card_name) <= 4 and howManyFound >= 200 :
-      return cardNotFound("To Many Cards for " + toCamel(card_name) ,url, True, "PLEASE REFINE SEARCH")
-      
-
-  #else Do card retreval
-  else:
-    #list to verify items have been passed
-    cardArray = []
-    #Default embeded string
-    embededVar = discord.Embed(title=toCamel(card_name) + "Search",url=url , color=discordColor)
-    
-    #pulls up all page results
-    for cardDetails in content.find_all('article', attrs={"class": "card"}):
-      
-      #gets the card name for only the cards with card name
-      #replaces symbols with Empty so card's name or card-s name gets cards name
-      cardHeadingReplaceEmpty = re.sub('[^A-Za-z0-9 ]+', '', cardDetails.h4.text)
-      #replaces symbols with Empty so card's name or card-s name gets card s name
-      cardHeadingReplaceSpace = re.sub('[^A-Za-z0-9 ]+', ' ', cardDetails.h4.text)
-
-      theCard = re.sub('[^A-Za-z0-9]+', ' ', card_name)
-      
-      print(cardHeadingReplaceEmpty +"\n" + cardHeadingReplaceSpace);
-      #use casefold() to match regardless of case
-      
-      #first 2 check if CARD's NA-ME is equal to cards name or card s na memoryview 
-      if set(theCard.casefold().split()) <= set(cardHeadingReplaceEmpty.casefold().split()) or      set(theCard.casefold().split()) <= set(cardHeadingReplaceSpace.casefold().split()):
-        #puts creates obj
-        class cardObj:
-          def __init__(card, name, theSet, price, currency, hyperLink):
-            card.name = name
-            card.theSet = theSet
-            card.price = price
-            card.currency = currency
-            card.link = hyperLink
-
-	#puts variables into obj
-        theCard = cardObj(
-                    cardDetails.h4.a.text.upper(),
-                    cardDetails.find('p', attrs={"class": "card-set"}).text,
-                    cardDetails.find('span', attrs={"class": "price--withoutTax"}).text,
-                    cardDetails.find('span', attrs={"class": "currencyCode"}).text,
-		    cardDetails.h4.a['href']
-                   
-          )
-        #puts object in an array
-        cardArray.append(cardObj)
-        #puts obj into embededVar
-        theCardText = '[' + theCard.theSet + ']' + '(' + theCard.link +')'
-        embededVar.add_field(name=theCard.name, value=theCardText + "\n" + theCard.price +" | " + theCard.currency, inline=True)
-
-        
-    #if search returns no data then array will be empty
-    if cardArray == []:
-      return cardNotFound("Card Not Found",url, True,  "CARD SEARCH INCONCLUSIVE")
-    else:
-      return embededVar
-
-#retunrs an error message into discord
-def cardNotFound(errortitle,errorLink,isLinkOn, errorReason):
-
-  if isLinkOn == True:
-   	#Error Message with Link
-  	embededError = discord.Embed(title=errortitle,url=errorLink, color=discordColor)
-  	embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
-  	return embededError
-  else:
-	#Error Message without link
-  	embededError = discord.Embed(title=errortitle, color=discordColor)
-  	embededError.add_field(name=errorReason, value="Please Try Again", inline=False)
-  	return embededError
-
-def toCamel(text):
-	#converts to only letters and spaces
-	text =  re.sub('[^A-Za-z0-9 ,-]+', ' ', text)
-	#removes extra white speace and convert word to lower case
-	text = joinSplit(text.lower())
-	#will break apart each word into list
-	words = text.split()
-	 
-	fullWord = ""
-	for x in words:
-		#for each list it will remove letter at index 1 and replace it wiht a capital
-		#join word and re join full string
-		fullWord += x.title() + " "
-	return fullWord
+	printLog.title(('Jacking into Discord {0.user}'.format(client)).center(80)) 
+	printLog.debug(('[Debug Mode is ON]').center(80))
 	
 
+#On Message
+@client.event
+async def on_message(message):
 
-def joinSplit(myString):
-	#removes excess white space 
-	cleanString = " ".join(myString.split())
-	return cleanString
-  
+	#checks to see if this is the bot
+	if validate.is_this_the_bot(message.author, client.user) == True:
+		return
+	else:
+		discord_message = message.content
+		#only searches if help_me or has proper brackets
+		if (discord_message.casefold()).find(help_me.casefold()) != -1 or validate.does_it_have_triggers(game_list, discord_message) == True:
+			
+			#puts the card names into a list
+			what_to_search = cs.get_card_names(discord_message,game_list,help_me)
+			
+			for card_obj in what_to_search:
+				#get Card info and outputs embed
+				UrlToken = os.getenv('Url')
+				card_embed = cs.get_card_embed(card_obj,game_list,ftfColor, UrlToken)
+				await message.channel.send(embed=card_embed)
+
+			
+			printLog.title(("End of Search").center(80))
+	
+		
+#On Edit
+#discord.on_message_edit(before, after)
+
+#On React to Message
+
+#Keeps the Bot Running as long as replit Doesnt Crash
 keep_alive()
-client.run(os.getenv('TOKEN')) #RUNS BOT using token in .env
+#Runs the Bot With the Token Hidden in .env
+client.run(os.getenv('TOKEN'))
