@@ -286,11 +286,14 @@ def error_message(error_header, url_link,error_title,error_text,error_colour):
 		error=discord.Embed(title=error_header, url=url_link, color=error_colour)
 		error.add_field(name=error_title, value=error_text, inline=False)
 	return error
+
+#Help Command
 def Help():
 	Help=discord.Embed(title="Help", description="This is my personal scraper, which will get you card prices from Face to Face Games.")
-	Help.add_field(name="To search for a Card just surround the card name with dollar signs and the appropriate brackets.", value="\u2022\t$[Magic the Gathering]$\n\u2022\t$(Pokemon)$\n\u2022\t$<Yu-Gi-Oh>$", inline=False)
-	Help.add_field(name="The general search will look up a product of that brand. If you include a \"|\" in the search it will look up only cards from that set", value="eg. $[ Card Name | Set ]$", inline=True)
-	Help.set_footer(text="This Bot is also compatible with the Scryfall Search Bot and will work with it as long as the set isn't abbreviated and the dollar signs are surrounding the Scryfall command")
+	Help.add_field(name="General Searching", value="To search for a Card just surround the card name with dollar signs and the appropriate brackets. \n > \u2022$[Magic the Gathering]$ \n> \u2022$(Pokemon) \n> \u2022$<Yu-Gi-Oh>$", inline=False)
+	Help.add_field(name="Set Search", value="The general search will look up a product of that brand. If you include a \"|\" in the search it will look up only cards from that set \n > eg. $[ Card Name | Set ]$", inline=False)
+	Help.add_field(name="Scryfall ", value="This Bot is also compatible with the Scryfall Search Bot and will work with it as long as the set isn't abbreviated and the dollar signs are surrounding the Scryfall Command", inline=False)
+	Help.set_footer(text="Don't forget you can also DM the bot to search for cards!")
 
 	return Help
 #clears Whitespace

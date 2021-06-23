@@ -1,5 +1,18 @@
 # FTF Bot 2.0
- Changes with 2.0 *[May 30, 2021]*
+## Changes with 2.1 - *[June 23,2021]*
+### Added
+ - Bot will can now read edited messages
+ &numsp; &numsp; &numsp; - This Feature only works in Servers
+ - Added Debug On off Switch when I (The Creator) DM it a command
+ - Added Emoji Reply to $Help$ in code. This might be changed for later features
+### Changes
+ - Bot now reply's to message on server   
+ &numsp; &numsp; &numsp; - Bot still doesnt reply in direct Messages, this is intentional
+ - Fixed Formatting in Changelog
+ - Updated Help Embed
+
+
+## Changes with 2.0 - *[May 30, 2021]*
 ### Added
  - Added validate.py to store validation for ease of use and access
  - Added debug_log.py to improve console readability
@@ -11,24 +24,24 @@
 ## Changes
  - Most of the code on main.py has been reworked into card_search.py for easier understanding and to make it easier to improve upon at a later date
  - Card Search no longer searches only card, you can now search products in that category
- - Brackets have been changed so $$Card Name$$ no longer works
-	- $Help$ replaces $$Help$$
-		- The Help embed has been improved
-	- $[Card Name]$ is now set for Magic The Gathering
-	- $(Card Name)$ is now set for Pokémon
-	- $<Card Name>$ is now set for Yu-Gi-Oh
- - Added The functionality to look up cards in sets with '|'
+ - Brackets have been changed so $$Card Name$$ no longer works     
+	- $Help$ replaces $$Help$$     
+		&numsp; &numsp; &numsp; - The Help embed has been improved     
+	- $[Card Name]$ is now set for Magic The Gathering     
+	- $(Card Name)$ is now set for Pokémon     
+	- $<Card Name>$ is now set for Yu-Gi-Oh    
+ - Added The functionality to look up cards in sets with '|'     
 	- Searching with '|' will only look up card singles and not products like boosters
  - Improved Error Embed for easier use in coding
- - The message embed now has different colors depending on its response
-	- Black for Help
-	- Red for "Cannot Connect to Website"
-	- Orange for Negative Search Results on Site
-	- Purple is for Magic the Gathering (in Reference the the proposed 6th Mana Symbol)
-	- Yellow is for Pokemon
-	- Brow is for Yu-Gi-Oh
-	- A list of other colors has also been added but not implemented
-		- One for each of the mana colors in Magic sans red which is in use for connection errors
+ - The message embed now has different colors depending on its response   
+	- Black for Help   
+	- Red for "Cannot Connect to Website"   
+	- Orange for Negative Search Results on Site   
+	- Purple is for Magic the Gathering (in Reference the the proposed 6th Mana Symbol)   
+	- Yellow is for Pokemon   
+	- Brow is for Yu-Gi-Oh   
+	- A list of other colors has also been added but not implemented   
+		&numsp; &numsp; &numsp; - One for each of the mana colors in Magic sans red which is in use for connection errors
  - The Card results now taste like candy
 
 ### Removed
