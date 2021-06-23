@@ -1,7 +1,7 @@
 # FTF Bot 2.0
 ## Changes with 2.1 - *[June 23,2021]*
 ### Added
- - Bot will can now read edited messages
+ - Bot will can now read edited messages   
  &numsp; &numsp; &numsp; - This Feature only works in Servers
  - Added Debug On off Switch when I (The Creator) DM it a command
  - Added Emoji Reply to $Help$ in code. This might be changed for later features
